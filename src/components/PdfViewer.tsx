@@ -70,7 +70,7 @@ export default function PdfViewer({ file }: PdfViewerProps) {
   };
 
   // Touch handlers
-  const getDistance = (touches: TouchList) => {
+  const getDistance = (touches: React.TouchList) => {
     if (touches.length < 2) return 0;
     const [t1, t2] = [touches[0], touches[1]];
     return Math.sqrt(Math.pow(t2.clientX - t1.clientX, 2) + Math.pow(t2.clientY - t1.clientY, 2));

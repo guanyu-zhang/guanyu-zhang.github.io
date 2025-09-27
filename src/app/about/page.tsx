@@ -16,7 +16,7 @@ export default function AboutPage() {
           
           <div className="prose prose-invert prose-lg mx-auto text-neutral-300">
             <p>
-              I am a software engineer with a Master&apos;s in Computer Science from Columbia University, specializing in Machine Learning. My professional experience at companies like Ant Group and Alipay has given me a strong background in designing and implementing large-scale distributed systems and backend services. 
+              I am a software engineer with a Master&#39;s in Computer Science from Columbia University, specializing in Machine Learning. My professional experience at companies like Ant Group and Alipay has given me a strong background in designing and implementing large-scale distributed systems and backend services. 
             </p>
             <p>
               I am particularly passionate about the intersection of distributed systems and artificial intelligence, with experience developing AI-powered tools for automated testing and building cloud-native applications. I thrive on solving complex problems and enhancing system reliability and performance.
