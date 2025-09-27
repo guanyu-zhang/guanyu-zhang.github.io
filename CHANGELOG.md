@@ -5,12 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.19] - 2025-09-27
+
+### Changed
+
+- Replaced the zoom in/out buttons in `src/components/PdfViewer.tsx` with an HTML range input for more intuitive scaling control.
+
 ## [0.1.18] - 2025-09-27
 
 ### Fixed
 
 - Resolved build errors by escaping an apostrophe in `src/app/about/page.tsx` to fix `react/no-unescaped-entities` error.
 - Removed unused `useState` import from `src/components/ThreeScene.tsx` to address lint warnings.
+- Fixed remote deploy errors and lint warnings.
 
 ## [0.1.17] - 2025-09-26
 
