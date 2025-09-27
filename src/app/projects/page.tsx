@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Projects - Guanyu Zhang',
@@ -11,6 +12,14 @@ const projects = [
     description: 'A web application to showcase various AI models and experiments. Built with Next.js and deployed on GitHub Pages.',
     href: 'https://guanyu-zhang.github.io/ai-showcase/',
     stack: ['Next.js', 'React', 'AI'],
+    isExternal: true,
+  },
+  {
+    title: 'iWildCam 2020 Animal Classification',
+    description: 'A machine learning project for the iWildCam 2020 Kaggle Competition to classify animals in camera trap images for biodiversity monitoring.',
+    href: '/projects/iwildcam',
+    stack: ['Python', 'PyTorch', 'Kaggle'],
+    isExternal: false,
   },
   // More projects can be added here
 ];
@@ -22,9 +31,9 @@ export default function ProjectsPage() {
         <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center">My Projects</h1>
         <div className="max-w-3xl mx-auto">
           <ul className="space-y-8">
-            {projects.map((project) => (
-              <li key={project.title}>
-                <a href={project.href} target="_blank" rel="noopener noreferrer" className="block p-6 border border-neutral-800 rounded-lg hover:bg-neutral-900 transition-colors duration-300">
+            {projects.map((project) => {
+              const content = (
+                <div className="block p-6 border border-neutral-800 rounded-lg hover:bg-neutral-900 transition-colors duration-300">
                   <h2 className="text-2xl font-bold mb-2">{project.title}</h2>
                   <p className="text-neutral-400 mb-4">{project.description}</p>
                   <div className="flex flex-wrap gap-2">
@@ -34,9 +43,23 @@ export default function ProjectsPage() {
                       </span>
                     ))}
                   </div>
-                </a>
-              </li>
-            ))}
+                </div>
+              );
+
+              return (
+                <li key={project.title}>
+                  {project.isExternal ? (
+                    <a href={project.href} target="_blank" rel="noopener noreferrer">
+                      {content}
+                    </a>
+                  ) : (
+                    <Link href={project.href}>
+                      {content}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

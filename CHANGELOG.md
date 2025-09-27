@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.33] - 2025-09-27
+
+### Added
+
+- Added the "iWildCam 2020 Animal Classification" project to the Projects page.
+- Created a new dedicated page for the project, which showcases the academic paper using the same responsive PDF viewer logic as the resume page.
+
+## [0.1.32] - 2025-09-27
+
+### Changed
+
+- Overhauled the mobile `PdfViewer` component using a more robust, measurement-based approach inspired by a reference implementation. The new logic manually calculates the precise scale and position required to center the PDF within its container, fixing persistent centering issues. This method replaces reliance on automatic centering and provides a more reliable and accurate initial layout.
+
+## [0.1.31] - 2025-09-27
+
+### Changed
+
+- Re-implemented the mobile PDF viewer from scratch using `react-zoom-pan-pinch`. This robust solution resolves all previously encountered issues, including the component being stuck on loading, incorrect initial scaling, and content centering problems. The new implementation is more stable and provides a reliable user experience.
+
 ## [0.1.29] - 2025-09-27
 
 ### Changed
