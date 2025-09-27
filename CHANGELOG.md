@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.14] - 2025-09-26
+
+### Changed
+
+- Replaced `@use-gesture/react` with `react-zoom-pan-pinch` for handling pinch-to-zoom and panning gestures in the PDF viewer. This change was made to improve the user experience on mobile devices, providing a more natural and intuitive interaction.
+
 ## [0.1.13] - 2025-09-26
 
 ### Added
