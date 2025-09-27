@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.17] - 2025-09-26
+
+### Changed
+
+- Replaced `react-zoom-pan-pinch` with native touch event handling for pinch-to-zoom and drag-to-pan functionality in the PDF viewer. This provides a more direct and customizable control over mobile gestures.
+
+## [0.1.16] - 2025-09-26
+
+### Fixed
+
+- Resolved the PDF centering issue in the resume viewer by correctly configuring the parent container as a flex container and ensuring the `TransformWrapper` fills the available space. This ensures the PDF content is always centered within its viewport.
+
 ## [0.1.15] - 2025-09-26
 
 ### Changed
