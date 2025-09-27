@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import { TransformWrapper, TransformComponent, ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 
 // Set up worker
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
@@ -13,21 +13,35 @@ interface PdfViewerProps {
 
 export default function PdfViewer({ file }: PdfViewerProps) {
   const [numPages, setNumPages] = useState<number | null>(null);
+  const [pageWidth, setPageWidth] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const transformWrapperRef = useRef<ReactZoomPanPinchRef>(null);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
   }
 
+  function onPageLoadSuccess(page: { width: number }) {
+    setPageWidth(page.width);
+  }
+
+  useEffect(() => {
+    if (pageWidth && containerRef.current && transformWrapperRef.current) {
+      const containerWidth = containerRef.current.offsetWidth;
+      const scale = containerWidth / pageWidth;
+      transformWrapperRef.current.setTransform(0, 0, scale, 0);
+    }
+  }, [pageWidth]);
+
   return (
-    <div className="w-full h-full flex flex-col items-center">
+    <div className="w-full h-full flex flex-col items-center" ref={containerRef}>
       <TransformWrapper
-        initialScale={1.5}
+        ref={transformWrapperRef}
         minScale={0.5}
         maxScale={4}
         limitToBounds={false}
-        centerOnInit
       >
-        {({ zoomIn, zoomOut, setTransform, ...rest }) => (
+        {({ zoomIn, zoomOut }) => (
           <>
             <div className="flex items-center justify-center mb-4 p-2 bg-neutral-800 rounded-lg z-10">
               <button
@@ -59,6 +73,7 @@ export default function PdfViewer({ file }: PdfViewerProps) {
                   <Page
                     key={`page_${index + 1}`}
                     pageNumber={index + 1}
+                    onLoadSuccess={index === 0 ? onPageLoadSuccess : undefined}
                     renderAnnotationLayer={false}
                     renderTextLayer={false}
                   />
