@@ -16,7 +16,7 @@ export default function AboutPage() {
           
           <div className="prose prose-invert prose-lg mx-auto text-neutral-300">
             <p>
-              I hold a Master's in Computer Science from Columbia University, where I specialized in Machine Learning. I have professional experience as a software engineer at Ant International and am passionate about building intelligent, scalable systems and exploring the frontiers of AI.
+              I hold a Master&apos;s in Computer Science from Columbia University, where I specialized in Machine Learning. I have professional experience as a software engineer at Ant International and am passionate about building intelligent, scalable systems and exploring the frontiers of AI.
             </p>
 
             <h2 className="text-3xl font-bold mt-12 mb-4 text-white">Technical Skills</h2>

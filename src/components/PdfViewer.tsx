@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Document, Page, pdfjs, PDFDocumentProxy } from 'react-pdf';
+import { Document, Page, pdfjs } from 'react-pdf';
+import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { useSpring, animated } from '@react-spring/web';
 import { useGesture } from '@use-gesture/react';
 
