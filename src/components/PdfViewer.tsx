@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useRef, MouseEvent, TouchEvent, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
+import { useSpring, animated } from '@react-spring/web';
+import { useGesture } from '@use-gesture/react';
 
-// Set up worker
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 interface PdfViewerProps {
@@ -12,159 +13,121 @@ interface PdfViewerProps {
 
 export default function PdfViewer({ file }: PdfViewerProps) {
   const [numPages, setNumPages] = useState<number | null>(null);
-  const [scale, setScale] = useState(1.0); // Default scale, will be adjusted
+  const [scaleState, setScaleState] = useState(1.0);
   const viewerRef = useRef<HTMLDivElement>(null);
+
+  const [{ x, y, scale }, api] = useSpring(() => ({
+    x: 0,
+    y: 0,
+    scale: 1,
+    config: { mass: 0.2, tension: 220, friction: 24 },
+    onChange: ({ value }) => {
+      setScaleState(value.scale);
+    },
+  }));
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
-    setScale(isMobile ? 0.6 : 1.5);
-  }, []); // Empty dependency array ensures this runs only once on mount
-
-
-  // Mouse drag state
-  const [isDragging, setIsDragging] = useState(false);
-  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-  const [scrollPos, setScrollPos] = useState({ top: 0, left: 0 });
-
-  // Touch pinch/zoom state
-  const [initialPinchDistance, setInitialPinchDistance] = useState<number | null>(null);
-  const [initialScaleOnPinch, setInitialScaleOnPinch] = useState<number | null>(null);
+    const initialScale = isMobile ? 0.6 : 1.2;
+    api.set({ scale: initialScale });
+  }, [api]);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
   }
 
-  // Mouse handlers
-  const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
-    if (viewerRef.current && e.button === 0) { // Only left click
-      setIsDragging(true);
-      setStartPos({
-        x: e.clientX,
-        y: e.clientY,
-      });
-      setScrollPos({
-        top: viewerRef.current.scrollTop,
-        left: viewerRef.current.scrollLeft,
-      });
-      viewerRef.current.style.cursor = 'grabbing';
-    }
-  };
+  useGesture(
+    {
+      onDrag: ({ pinching, cancel, offset: [dx, dy] }) => {
+        if (pinching) return cancel();
+        api.start({ x: dx, y: dy });
+      },
+      onPinch: ({ origin: [ox, oy], first, movement: [ms], offset: [s], memo }) => {
+        if (first) {
+          const { top, left, width, height } = viewerRef.current!.getBoundingClientRect();
+          const tx = ox - left - width / 2;
+          const ty = oy - top - height / 2;
+          memo = [x.get(), y.get(), tx, ty];
+        }
+        
+        const newScale = s;
+        const [x_orig, y_orig, tx, ty] = memo;
+        
+        const newX = x_orig + (1 - newScale / scale.get()) * tx;
+        const newY = y_orig + (1 - newScale / scale.get()) * ty;
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    if (viewerRef.current) {
-      viewerRef.current.style.cursor = 'grab';
+        api.start({ scale: newScale, x: newX, y: newY });
+        return memo;
+      },
+    },
+    {
+      target: viewerRef,
+      eventOptions: { passive: false },
+      drag: {
+        from: () => [x.get(), y.get()],
+        bounds: { left: -200, right: 200, top: -200, bottom: 200 }, // Example bounds
+        rubberband: true,
+      },
+      pinch: {
+        from: () => [scale.get(), 0],
+        scaleBounds: { min: 0.5, max: 4 },
+        rubberband: true,
+      },
     }
-  };
+  );
 
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (isDragging && viewerRef.current) {
-      const dx = e.clientX - startPos.x;
-      const dy = e.clientY - startPos.y;
-      viewerRef.current.scrollTop = scrollPos.top - dy;
-      viewerRef.current.scrollLeft = scrollPos.left - dx;
-    }
-  };
-  
-  const handleMouseLeave = () => {
-    if (isDragging) {
-      setIsDragging(false);
-      if (viewerRef.current) {
-        viewerRef.current.style.cursor = 'grab';
-      }
-    }
-  };
-
-  // Touch handlers
-  const getDistance = (touches: React.TouchList) => {
-    if (touches.length < 2) return 0;
-    const [t1, t2] = [touches[0], touches[1]];
-    return Math.sqrt(Math.pow(t2.clientX - t1.clientX, 2) + Math.pow(t2.clientY - t1.clientY, 2));
-  };
-
-  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
-    if (viewerRef.current) {
-      if (e.touches.length === 2) {
-        e.preventDefault(); // Prevent default zoom behavior
-        setInitialPinchDistance(getDistance(e.touches));
-        setInitialScaleOnPinch(scale);
-      } else if (e.touches.length === 1) {
-        setIsDragging(true);
-        setStartPos({
-          x: e.touches[0].clientX,
-          y: e.touches[0].clientY,
-        });
-        setScrollPos({
-          top: viewerRef.current.scrollTop,
-          left: viewerRef.current.scrollLeft,
-        });
-      }
-    }
-  };
-
-  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
-    if (viewerRef.current) {
-      if (e.touches.length === 2 && initialPinchDistance !== null && initialScaleOnPinch !== null) {
-        e.preventDefault(); // Prevent default zoom behavior
-        const currentDistance = getDistance(e.touches);
-        const newScale = initialScaleOnPinch * (currentDistance / initialPinchDistance);
-        setScale(Math.max(0.5, Math.min(newScale, 4)));
-      } else if (isDragging && e.touches.length === 1) {
-        const dx = e.touches[0].clientX - startPos.x;
-        const dy = e.touches[0].clientY - startPos.y;
-        viewerRef.current.scrollTop = scrollPos.top - dy;
-        viewerRef.current.scrollLeft = scrollPos.left - dx;
-      }
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-    setInitialPinchDistance(null);
-    setInitialScaleOnPinch(null);
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newScale = parseFloat(e.target.value);
+    api.start({ scale: newScale, x: 0, y: 0 }); // Also reset position on slider change
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center">
-      <div className="flex items-center justify-center mb-4 p-2 bg-neutral-800 rounded-lg z-10">
+    <div className="w-full h-full flex flex-col items-center bg-neutral-900">
+      <div className="flex items-center justify-center mb-4 p-2 bg-neutral-800 rounded-lg z-10 shadow-lg">
         <input
           type="range"
           min="0.5"
           max="4"
           step="0.05"
-          value={scale}
-          onChange={(e) => setScale(parseFloat(e.target.value))}
+          value={scaleState}
+          onChange={handleSliderChange}
           className="w-48 h-2 bg-neutral-700 rounded-lg appearance-none cursor-pointer accent-cyan-600"
         />
-        <span className="mx-4 text-lg font-medium tabular-nums">{(scale * 100).toFixed(0)}%</span>
+        <span className="ml-4 text-lg font-medium tabular-nums w-16 text-center">
+          {(scaleState * 100).toFixed(0)}%
+        </span>
       </div>
       <div
         ref={viewerRef}
-        className="w-full h-full overflow-auto cursor-grab"
-        style={{ touchAction: 'none' }}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        className="w-full h-full overflow-hidden cursor-grab touch-none relative"
       >
-        <Document
-          file={file}
-          onLoadSuccess={onDocumentLoadSuccess}
-          className="flex justify-center"
+        <animated.div
+          style={{
+            x,
+            y,
+            scale,
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         >
-          {Array.from(new Array(numPages), (el, index) => (
-            <Page
-              key={`page_${index + 1}`}
-              pageNumber={index + 1}
-              scale={scale}
-              renderAnnotationLayer={false}
-              renderTextLayer={false}
-            />
-          ))}
-        </Document>
+          <Document
+            file={file}
+            onLoadSuccess={onDocumentLoadSuccess}
+            className="flex justify-center shadow-2xl"
+          >
+            {Array.from(new Array(numPages), (el, index) => (
+              <Page
+                key={`page_${index + 1}`}
+                pageNumber={index + 1}
+                renderAnnotationLayer={false}
+                renderTextLayer={false}
+              />
+            ))}
+          </Document>
+        </animated.div>
       </div>
     </div>
   );

@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.23] - 2025-09-27
+
+### Changed
+
+- Refactored the PDF viewer on the resume page to use `@use-gesture/react` and `@react-spring/web` for handling pinch-to-zoom and panning gestures. This provides a much smoother and more responsive user experience on mobile devices, resolving issues with laggy zooming and restricted panning.
+
+### Fixed
+
+- Fixed an issue in the PDF viewer where the zoom slider would not correctly stay at the selected magnification level. The slider now accurately reflects and controls the current zoom state by binding it directly to the animation state.
+
 ## [0.1.21] - 2025-09-27
 
 ### Fixed
