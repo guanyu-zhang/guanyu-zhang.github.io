@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, MouseEvent, TouchEvent } from 'react';
+import { useState, useRef, MouseEvent, TouchEvent, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 
 // Set up worker
@@ -12,8 +12,14 @@ interface PdfViewerProps {
 
 export default function PdfViewer({ file }: PdfViewerProps) {
   const [numPages, setNumPages] = useState<number | null>(null);
-  const [scale, setScale] = useState(1.5);
+  const [scale, setScale] = useState(1.0); // Default scale, will be adjusted
   const viewerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    setScale(isMobile ? 0.6 : 1.5);
+  }, []); // Empty dependency array ensures this runs only once on mount
+
 
   // Mouse drag state
   const [isDragging, setIsDragging] = useState(false);
@@ -124,21 +130,16 @@ export default function PdfViewer({ file }: PdfViewerProps) {
   return (
     <div className="w-full h-full flex flex-col items-center">
       <div className="flex items-center justify-center mb-4 p-2 bg-neutral-800 rounded-lg z-10">
-        <button
-          onClick={zoomOut}
-          className="px-4 py-2 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700 transition-colors duration-300 disabled:bg-neutral-600"
-          disabled={scale <= 0.5}
-        >
-          -
-        </button>
+        <input
+          type="range"
+          min="0.5"
+          max="4"
+          step="0.05"
+          value={scale}
+          onChange={(e) => setScale(parseFloat(e.target.value))}
+          className="w-48 h-2 bg-neutral-700 rounded-lg appearance-none cursor-pointer accent-cyan-600"
+        />
         <span className="mx-4 text-lg font-medium tabular-nums">{(scale * 100).toFixed(0)}%</span>
-        <button
-          onClick={zoomIn}
-          className="px-4 py-2 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700 transition-colors duration-300 disabled:bg-neutral-600"
-          disabled={scale >= 4}
-        >
-          +
-        </button>
       </div>
       <div
         ref={viewerRef}
