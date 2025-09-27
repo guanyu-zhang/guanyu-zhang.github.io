@@ -124,9 +124,6 @@ export default function PdfViewer({ file }: PdfViewerProps) {
     setInitialScaleOnPinch(null);
   };
 
-  const zoomIn = () => setScale(prevScale => Math.min(prevScale + 0.2, 4));
-  const zoomOut = () => setScale(prevScale => Math.max(prevScale - 0.2, 0.5));
-
   return (
     <div className="w-full h-full flex flex-col items-center">
       <div className="flex items-center justify-center mb-4 p-2 bg-neutral-800 rounded-lg z-10">
