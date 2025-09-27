@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useRef, MouseEvent } from 'react';
+import { useState, useRef } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
+import { useGesture } from '@use-gesture/react';
 
 // Set up worker
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
@@ -12,62 +13,59 @@ interface PdfViewerProps {
 
 export default function PdfViewer({ file }: PdfViewerProps) {
   const [numPages, setNumPages] = useState<number | null>(null);
-  const [scale, setScale] = useState(1.5); // Start with a zoomed-in view
+  const [scale, setScale] = useState(1.5);
   const viewerRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-  const [scrollPos, setScrollPos] = useState({ top: 0, left: 0 });
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
   }
 
-  const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
-    if (viewerRef.current) {
-      setIsDragging(true);
-      setStartPos({
-        x: e.clientX,
-        y: e.clientY,
-      });
-      setScrollPos({
-        top: viewerRef.current.scrollTop,
-        left: viewerRef.current.scrollLeft,
-      });
-      viewerRef.current.style.cursor = 'grabbing';
+  useGesture(
+    {
+      onDrag: ({ pinching, cancel, offset: [x, y], ...rest }) => {
+        if (pinching) return cancel();
+        if (viewerRef.current) {
+          viewerRef.current.style.cursor = 'grabbing';
+          viewerRef.current.scrollLeft = -x;
+          viewerRef.current.scrollTop = -y;
+        }
+      },
+      onDragEnd: () => {
+        if (viewerRef.current) {
+          viewerRef.current.style.cursor = 'grab';
+        }
+      },
+      onPinch: ({ origin: [ox, oy], first, movement: [ms], memo }) => {
+        const newScale = first ? scale : memo + ms;
+        setScale(Math.max(0.5, Math.min(newScale, 4)));
+        return newScale;
+      },
+    },
+    {
+      target: viewerRef,
+      drag: {
+        from: () => [-viewerRef.current!.scrollLeft, -viewerRef.current!.scrollTop],
+        filterTaps: true,
+        bounds: {
+          left: -Infinity,
+          right: Infinity,
+          top: -Infinity,
+          bottom: Infinity,
+        },
+      },
+      pinch: {
+        from: () => [scale, 0],
+        scaleBounds: { min: 0.5, max: 4 },
+      },
     }
-  };
+  );
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    if (viewerRef.current) {
-      viewerRef.current.style.cursor = 'grab';
-    }
-  };
-
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (isDragging && viewerRef.current) {
-      const dx = e.clientX - startPos.x;
-      const dy = e.clientY - startPos.y;
-      viewerRef.current.scrollTop = scrollPos.top - dy;
-      viewerRef.current.scrollLeft = scrollPos.left - dx;
-    }
-  };
-  
-  const handleMouseLeave = () => {
-    if (isDragging) {
-      setIsDragging(false);
-      if (viewerRef.current) {
-        viewerRef.current.style.cursor = 'grab';
-      }
-    }
-  };
-
-  const zoomIn = () => setScale(prevScale => Math.min(prevScale + 0.2, 3));
+  const zoomIn = () => setScale(prevScale => Math.min(prevScale + 0.2, 4));
   const zoomOut = () => setScale(prevScale => Math.max(prevScale - 0.2, 0.5));
 
   return (
-    <div className="w-full h-full flex flex-col items-center">
-      <div className="flex items-center justify-center mb-4 p-2 bg-neutral-800 rounded-lg">
+    <div className="w-full h-full flex flex-col items-center touch-none">
+      <div className="flex items-center justify-center mb-4 p-2 bg-neutral-800 rounded-lg z-10">
         <button
           onClick={zoomOut}
           className="px-4 py-2 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700 transition-colors duration-300 disabled:bg-neutral-600"
@@ -79,7 +77,7 @@ export default function PdfViewer({ file }: PdfViewerProps) {
         <button
           onClick={zoomIn}
           className="px-4 py-2 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700 transition-colors duration-300 disabled:bg-neutral-600"
-          disabled={scale >= 3}
+          disabled={scale >= 4}
         >
           +
         </button>
@@ -87,10 +85,7 @@ export default function PdfViewer({ file }: PdfViewerProps) {
       <div
         ref={viewerRef}
         className="w-full h-full overflow-auto cursor-grab"
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
+        style={{ touchAction: 'none' }}
       >
         <Document
           file={file}

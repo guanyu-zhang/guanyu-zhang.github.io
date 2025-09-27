@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.13] - 2025-09-26
+
+### Added
+
+- Implemented pinch-to-zoom and drag-to-pan functionality for the PDF viewer on the resume page. This was achieved by integrating the `@use-gesture/react` library to handle touch gestures on mobile devices, significantly improving the user experience.
+
 ## [0.1.12] - 2025-09-26
 
 ### Fixed
