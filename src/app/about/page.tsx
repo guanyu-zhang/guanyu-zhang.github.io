@@ -5,21 +5,18 @@ export const metadata: Metadata = {
   description: 'About Guanyu Zhang, a software engineer specializing in distributed systems and AI.',
 };
 
-const skills = ['Java', 'Python', 'Go', 'JavaScript', 'SQL', 'AWS', 'GCP', 'Docker', 'Kubernetes', 'PyTorch', 'MongoDB', 'Redis'];
+const skills = ['C++', 'Java', 'Go', 'Python', 'JavaScript', 'SQL', 'AWS', 'GCP', 'Docker', 'Kubernetes', 'PyTorch', 'MongoDB', 'Redis'];
 
 export default function AboutPage() {
   return (
-    <div className="w-full min-h-screen bg-black text-white pt-24 md:pt-32">
+    <div className="w-full min-h-screen bg-black text-white pt-24 md:pt-32 pb-24">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center">About Me</h1>
           
           <div className="prose prose-invert prose-lg mx-auto text-neutral-300">
             <p>
-              I am a software engineer with a Master&#39;s in Computer Science from Columbia University, specializing in Machine Learning. My professional experience at companies like Ant Group and Alipay has given me a strong background in designing and implementing large-scale distributed systems and backend services. 
-            </p>
-            <p>
-              I am particularly passionate about the intersection of distributed systems and artificial intelligence, with experience developing AI-powered tools for automated testing and building cloud-native applications. I thrive on solving complex problems and enhancing system reliability and performance.
+              I hold a Master's in Computer Science from Columbia University, where I specialized in Machine Learning. I have professional experience as a software engineer at Ant International and am passionate about building intelligent, scalable systems and exploring the frontiers of AI.
             </p>
 
             <h2 className="text-3xl font-bold mt-12 mb-4 text-white">Technical Skills</h2>

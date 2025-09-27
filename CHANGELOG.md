@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.29] - 2025-09-27
+
+### Changed
+
+- Added bottom padding (`pb-24`) to the main container of all sub-pages (About, Projects, Resume) to create a consistent buffer at the bottom of the screen and improve usability on mobile devices.
+- Shortened the biography on the About page to be more concise, focusing on the key highlights of education, experience, and interests.
+- Updated and reordered the Technical Skills list on the About page, adding C++ and prioritizing programming languages.
+
+## [0.1.27] - 2025-09-27
+
+### Fixed
+
+- Resolved an issue where the PDF resume would not display on any iPad model. The device detection logic was simplified and made more robust by checking for general touch support (`'ontouchstart' in window`) instead of relying on unreliable user agent or platform strings. This ensures all touch-capable devices, including all iPads and touch-screen laptops, are correctly served the functional gesture-based PDF viewer.
+
+## [0.1.26] - 2025-09-27
+
+### Changed
+
+- Fundamentally refactored the mobile `PdfViewer` component to resolve issues with setting the initial scale. The component now uses a standard React `useState` for scale management, which is passed directly to the `<Page>` component. Panning remains controlled by `react-spring`. This separation of concerns provides a more direct and reliable control over the PDF's scale.
+
+## [0.1.25] - 2025-09-27
+
+### Changed
+
+- Refactored the resume page to use different PDF rendering strategies for desktop and mobile. Desktop users now get a native browser PDF viewer via an `<iframe>` for a full-featured experience. Mobile users get a simplified, gesture-based viewer (`react-pdf` with `use-gesture`) without the slider controls, relying purely on pinch-to-zoom and pan.
+- The mobile PDF viewer now dynamically calculates the initial zoom level to fit the PDF to the container's width, providing a better default viewing experience. The scaling factor was adjusted to provide more horizontal padding.
+
+## [0.1.24] - 2025-09-27
+
+### Fixed
+
+- Fixed a persistent issue where the PDF viewer's zoom slider would fight user input and snap back to its original position. The root cause was a race condition between the slider's input event and the animation's feedback loop. The final solution uses a `useRef` flag (`isSliding`) to prevent the animation from updating the slider's UI while the user is actively dragging it, giving the user full control and resolving the conflict.
+
 ## [0.1.23] - 2025-09-27
 
 ### Changed
