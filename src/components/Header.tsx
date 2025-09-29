@@ -8,6 +8,7 @@ const navLinks = [
   { href: '/about', label: 'About' },
   { href: '/resume', label: 'Resume' },
   { href: '/projects', label: 'Projects' },
+  { href: '/blogs', label: 'Blog' },
 ];
 
 const Header = () => {

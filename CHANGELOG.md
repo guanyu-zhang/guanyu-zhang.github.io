@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] - 2025-09-29
+
+### Fixed
+
+- Resolved a critical build failure by downgrading Next.js from v15 to v14 and re-implementing pagination for blogs and projects to be fully static, compatible with the `output: 'export'` configuration.
+
+### Changed
+
+- Modified the project and blog list layouts to a single, centered column on all screen sizes to improve readability, as per user preference.
+- Constrained the width of MDX content on blog and project detail pages to match the `about` page, improving readability.
+- Updated the `<Pdf>` component to always display the "Download PDF" button above the PDF viewer, regardless of the device.
+- Increased the height of the PDF viewer container from `h-[80vh]` to `h-[90vh]` for better visibility.
+- Added author's name display to project cards, similar to blog cards, and ensured it handles multiple comma-separated authors.
+- Implemented secondary sorting for blog posts: if dates are identical, posts are now sorted by their numerical slug in descending order (e.g., blog12 before blog11).
+- Added reasonable vertical spacing above the "Download PDF" button and below the PDF viewer in the `<Pdf>` component.
+- Reverted all styling changes for MDX headings and re-applied explicit CSS in `globals.css` as a workaround for persistent styling issues with `@tailwindcss/typography`.
+- Updated the image in `blog1.mdx` to use the provided SVG link.
+
+### Added
+
+- Created 10 additional test blog posts to demonstrate the pagination functionality.
+
+## [0.2.1] - 2025-09-29
+
+### Changed
+
+- Renamed blog and project `.mdx` files to a numbered format (e.g., `blog1.mdx`, `project1.mdx`) to simplify content fetching and streamline dynamic routing with Next.js.
+
+## [0.2.0] - 2025-09-29
+
+### Added
+
+- **Blog Section**: Implemented a new blog section with a paginated index page and dynamic pages for individual posts.
+- **MDX Support**: Integrated MDX for creating content for both blogs and projects, allowing for easier content creation.
+- **Content Fetching Utilities**: Created a library of functions to read and parse MDX files from the file system.
+- **Custom `<Pdf>` Component**: Developed a responsive `<Pdf>` component that can be used in MDX files to display PDFs. It uses an iframe on desktop and a gesture-based viewer on mobile, with a download button.
+- **Typography Plugin**: Added `@tailwindcss/typography` for styling MDX content.
+- **Sample Content**: Created sample blog posts and a project page to demonstrate the new architecture.
+
+### Changed
+
+- **Projects Section**: Upgraded the projects section to use the new MDX-based architecture, displaying projects from MDX files in a card-based layout.
+- **Navigation**: Added a "Blog" link to the main navigation.
+- **Dependencies**: Added `@next/mdx`, `gray-matter`, `remark`, `remark-gfm`, `next-mdx-remote`, and `@tailwindcss/typography`.
+
 ## [0.1.33] - 2025-09-27
 
 ### Added
