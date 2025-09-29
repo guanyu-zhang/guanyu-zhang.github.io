@@ -41,7 +41,7 @@ export default function Pdf({ src }: PdfProps) {
     <a
       href={src}
       download
-      className="mt-4 px-6 py-3 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700 transition-colors duration-300 text-center"
+      className="mt-4 px-6 py-3 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700 transition-colors duration-300 text-center no-underline hover:no-underline"
     >
       Download PDF
     </a>

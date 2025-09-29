@@ -29,7 +29,7 @@ export default function BlogPage() {
   return (
     <div className="w-full min-h-screen bg-black text-white pt-24 md:pt-32 pb-24">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center">Blog</h1>
+        <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center">Blogs</h1>
         <div className="grid grid-cols-1 gap-8 max-w-3xl mx-auto">
           {posts.map((post) => (
             <PostCard key={post.slug} post={post} />

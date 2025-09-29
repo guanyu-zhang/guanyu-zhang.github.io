@@ -2,6 +2,8 @@ import { getAllPostSlugs, getPostData } from '@/lib/content';
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Pdf from '@/components/Pdf';
+import remarkGfm from 'remark-gfm';
+import { useMDXComponents } from '@/mdx-components';
 
 export async function generateStaticParams() {
   const slugs = getAllPostSlugs('blogs');
@@ -35,7 +37,11 @@ export default async function BlogSlugPage({ params }: { params: { slug: string 
             </div>
           </header>
           
-          <MDXRemote source={post.content} components={{ Pdf }} />
+          <MDXRemote 
+            source={post.content} 
+            components={useMDXComponents({ Pdf })} 
+            options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} 
+          />
 
           <hr className="my-12 border-neutral-700" />
 

@@ -9,7 +9,15 @@ function ProjectCard({ project }: { project: Post }) {
     <Link href={`/projects/${project.slug}`}>
       <div className="block p-6 bg-neutral-800 rounded-lg shadow-lg hover:bg-neutral-700 transition-colors duration-300 h-full">
         <h2 className="text-2xl font-bold mb-2 text-white">{project.title}</h2>
-        <p className="text-neutral-400 mb-2">{project.author}</p>
+        <div className="text-neutral-400 mb-2 flex items-center">
+          <span>{project.author}</span>
+          {project.location && (
+            <>
+              <span className="mx-2">|</span>
+              <span>{project.location}</span>
+            </>
+          )}
+        </div>
         <p className="text-neutral-400">{new Date(project.date).toLocaleDateString()}</p>
       </div>
     </Link>
