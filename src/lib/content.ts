@@ -11,6 +11,9 @@ function getPostsDirectory(type: 'blogs' | 'projects') {
 
 export function getSortedPostsData(type: 'blogs' | 'projects'): Post[] {
   const postsDirectory = getPostsDirectory(type);
+  if (!fs.existsSync(postsDirectory)) {
+    return [];
+  }
   const filenames = fs.readdirSync(postsDirectory);
 
   const allPostsData = filenames
@@ -53,6 +56,9 @@ export function getSortedPostsData(type: 'blogs' | 'projects'): Post[] {
 
 export function getAllPostSlugs(type: 'blogs' | 'projects') {
   const postsDirectory = getPostsDirectory(type);
+  if (!fs.existsSync(postsDirectory)) {
+    return [];
+  }
   const filenames = fs.readdirSync(postsDirectory);
 
   return filenames
