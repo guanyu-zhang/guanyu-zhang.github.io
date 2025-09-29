@@ -7,6 +7,10 @@ import { useMDXComponents } from '@/mdx-components';
 
 export async function generateStaticParams() {
   const slugs = getAllPostSlugs('projects');
+  // If there are no projects, return a dummy slug to prevent build errors with output: 'export'
+  if (slugs.length === 0) {
+    return [{ slug: 'dummy' }];
+  }
   return slugs;
 }
 

@@ -5,8 +5,12 @@ import type { Post } from '@/lib/types';
 const POSTS_PER_PAGE = 6;
 
 export async function generateStaticParams() {
-  const allPosts = getSortedPostsData('projects');
-  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+  const allProjects = getSortedPostsData('projects');
+  const totalPages = Math.ceil(allProjects.length / POSTS_PER_PAGE);
+  // Ensure at least page 1 is generated even if no projects, to prevent build errors with output: 'export'
+  if (totalPages === 0) {
+    return [{ page: '1' }];
+  }
   const paths = Array.from({ length: totalPages }, (_, i) => ({
     page: (i + 1).toString(),
   }));
@@ -39,28 +43,36 @@ export default function ProjectsPage({ params }: { params: { page: string } }) {
     <div className="w-full min-h-screen bg-black text-white pt-24 md:pt-32 pb-24">
       <div className="container mx-auto px-4">
         <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center">Projects</h1>
-        <div className="grid grid-cols-1 gap-8 max-w-3xl mx-auto">
-          {projects.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
-          ))}
-        </div>
+        {allProjects.length === 0 ? (
+          <div className="text-center text-neutral-400 text-xl mt-12">
+            No projects found.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 max-w-3xl mx-auto">
+            {projects.map((project) => (
+              <ProjectCard key={project.slug} project={project} />
+            ))}
+          </div>
+        )}
 
         {/* Pagination */}
-        <div className="flex justify-center items-center gap-8 mt-12">
-          {currentPage > 1 && (
-            <Link href={currentPage === 2 ? '/projects' : `/projects/page/${currentPage - 1}`}>
-              <span className="text-lg font-medium text-neutral-400 hover:text-white transition-colors">Previous</span>
-            </Link>
-          )}
-          <span className='text-lg font-medium text-white'>
-            Page {currentPage} of {totalPages}
-          </span>
-          {currentPage < totalPages && (
-            <Link href={`/projects/page/${currentPage + 1}`}>
-              <span className="text-lg font-medium text-neutral-400 hover:text-white transition-colors">Next</span>
-            </Link>
-          )}
-        </div>
+        {allProjects.length > 0 && (
+          <div className="flex justify-center items-center gap-8 mt-12">
+            {currentPage > 1 && (
+              <Link href={currentPage === 2 ? '/projects' : `/projects/page/${currentPage - 1}`}>
+                <span className="text-lg font-medium text-neutral-400 hover:text-white transition-colors">Previous</span>
+              </Link>
+            )}
+            <span className='text-lg font-medium text-white'>
+              Page {currentPage} of {totalPages}
+            </span>
+            {currentPage < totalPages && (
+              <Link href={`/projects/page/${currentPage + 1}`}>
+                <span className="text-lg font-medium text-neutral-400 hover:text-white transition-colors">Next</span>
+              </Link>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
