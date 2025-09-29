@@ -55,6 +55,16 @@ export default async function ProjectSlugPage({ params }: Props) {
             options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} 
           />
 
+          <hr className="my-12 border-neutral-700" />
+
+          {/* Comment Section Placeholder */}
+          <div id="comments" className="mt-8">
+            <h2 className="text-2xl font-bold text-white">Comments</h2>
+            <div className="mt-4 p-4 bg-neutral-900 rounded-lg text-center text-neutral-500">
+              <p>Comments are coming soon.</p>
+            </div>
+          </div>
+
         </article>
       </div>
     </div>
