@@ -4,10 +4,26 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import Pdf from '@/components/Pdf';
 import remarkGfm from 'remark-gfm';
 import { useMDXComponents } from '@/mdx-components';
+import { CommentSection } from '@/components/CommentSection';
+import { User, CommentWithChildren } from '@/lib/types';
+
+// --- Helper functions to be implemented in the backend --- 
+// These are placeholders to simulate fetching data on the server.
+async function getUserSession(): Promise<User | null> {
+  // In a real backend, this would verify a session cookie and return user data.
+  // For now, we'll simulate a logged-out user.
+  return null;
+}
+
+async function getComments(slug: string): Promise<CommentWithChildren[]> {
+  // In a real backend, this would fetch from the database.
+  // For now, return an empty array.
+  return [];
+}
+// --- End of helper functions ---
 
 export async function generateStaticParams() {
   const slugs = getAllPostSlugs('blogs');
-  // If there are no posts, return a dummy slug to prevent build errors with output: 'export'
   if (slugs.length === 0) {
     return [{ slug: 'dummy' }];
   }
@@ -25,6 +41,10 @@ async function getPost(slug: string) {
 
 export default async function BlogSlugPage({ params }: { params: { slug: string } }) {
   const post = await getPost(params.slug);
+  
+  // Fetch user and comments data on the server
+  const currentUser = await getUserSession();
+  const initialComments = await getComments(params.slug);
 
   return (
     <div className="w-full min-h-screen bg-black text-white pt-24 md:pt-32 pb-24">
@@ -49,13 +69,11 @@ export default async function BlogSlugPage({ params }: { params: { slug: string 
 
           <hr className="my-12 border-neutral-700" />
 
-          {/* Comment Section Placeholder */}
-          <div id="comments" className="mt-8">
-            <h2 className="text-2xl font-bold text-white">Comments</h2>
-            <div className="mt-4 p-4 bg-neutral-900 rounded-lg text-center text-neutral-500">
-              <p>Comments are coming soon.</p>
-            </div>
-          </div>
+          <CommentSection 
+            slug={params.slug} 
+            initialComments={initialComments} 
+            currentUser={currentUser} 
+          />
         </article>
       </div>
     </div>

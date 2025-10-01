@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2025-09-30
+
+### Added
+
+- **Comment System**: Implemented a full-featured comment system for blog and project pages.
+- **Authentication**: Integrated with Neon Auth for user authentication via GitHub and Google, enabling users to post comments.
+- **Nested Comments**: The system supports infinitely nested comment threads, allowing users to reply to specific comments.
+- **Markdown Support**: Comment input supports Markdown (including links and emoji), which is safely rendered on the frontend using `react-markdown` to prevent XSS attacks.
+- **Abuse Prevention**: A server-enforced limit of 100 comments per page has been implemented to prevent spam and abuse.
+- **UI/UX**: The comment section includes user avatars, collapsible threads, and a clean, modern UI for reading and posting comments.
+- **Comprehensive Design**: Created a detailed `design.md` document outlining the entire architecture, from database schema to frontend components and security considerations.
+
+### Changed
+
+- **Page Architecture**: Refactored blog and project detail pages (`[slug]/page.tsx`) into async Server Components to fetch initial user and comment data on the server, improving performance.
+- **Dependencies**: Added `swr` for client-side data fetching, `react-markdown` for safe content rendering, and `remark-gfm` for extended Markdown support.
+
 ## [0.2.2] - 2025-09-29
 
 ### Fixed
