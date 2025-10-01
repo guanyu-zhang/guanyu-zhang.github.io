@@ -1,18 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useStackApp, useUser } from '@stackframe/stack';
 import useSWR from 'swr';
 import { CommentWithChildren, User } from '@/lib/types';
 import CommentList from './CommentList';
 import CommentForm from './CommentForm';
 
-interface CommentSectionProps {
-  slug: string;
-  initialComments: CommentWithChildren[];
-  currentUser: User | null;
-}
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'; // Placeholder
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 // Helper to count total comments, including nested ones
@@ -22,27 +16,22 @@ const countComments = (comments: CommentWithChildren[]): number => {
   }, 0);
 };
 
-export default function LoginButtons() {
-  const neonAuthHost = process.env.NEXT_PUBLIC_NEON_AUTH_HOST;
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+function LoginButtons() {
+  const app = useStackApp();
 
-  if (!neonAuthHost || !appUrl) {
-    console.error('Missing NEXT_PUBLIC_NEON_AUTH_HOST or NEXT_PUBLIC_APP_URL env vars');
+  if (!app) {
     return <p className="text-red-500">Login configuration is missing.</p>;
   }
-
-  const githubLoginUrl = `https://${neonAuthHost}/login?provider=github&redirect_uri=${appUrl}`;
-  const googleLoginUrl = `https://${neonAuthHost}/login?provider=google&redirect_uri=${appUrl}`;
 
   return (
     <div className="border border-gray-700 rounded-lg p-6 text-center">
       <h3 className="font-semibold text-white mb-4">Join the conversation</h3>
       <p className="text-gray-400 mb-6">Please log in to post a comment.</p>
       <div className="flex flex-col sm:flex-row justify-center gap-4">
-        <a href={githubLoginUrl} className="px-6 py-2 font-semibold text-white bg-gray-800 border border-gray-600 rounded-md hover:bg-gray-700">
+        <a href={app.urls.signInWithProvider('github')} className="px-6 py-2 font-semibold text-white bg-gray-800 border border-gray-600 rounded-md hover:bg-gray-700">
           Login with GitHub
         </a>
-        <a href={googleLoginUrl} className="px-6 py-2 font-semibold text-white bg-blue-600 border border-blue-600 rounded-md hover:bg-blue-700">
+        <a href={app.urls.signInWithProvider('google')} className="px-6 py-2 font-semibold text-white bg-blue-600 border border-blue-600 rounded-md hover:bg-blue-700">
           Login with Google
         </a>
       </div>
@@ -50,13 +39,21 @@ export default function LoginButtons() {
   );
 }
 
-export function CommentSection({ slug, initialComments, currentUser }: CommentSectionProps) {
-  const { data: comments, error, mutate } = useSWR<CommentWithChildren[]>(`${API_URL}/api/comments?slug=${slug}`, fetcher, { fallbackData: initialComments });
+export function CommentSection({ slug, initialComments }: {
+  slug: string;
+  initialComments: CommentWithChildren[];
+}) {
+  const currentUser = useUser();
+  const { data: comments, error, mutate } = useSWR<CommentWithChildren[]>(API_URL ? `${API_URL}/api/comments?slug=${slug}` : null, fetcher, { fallbackData: initialComments });
 
   const totalComments = comments ? countComments(comments) : 0;
   const limitReached = totalComments >= 100;
 
   const handlePostComment = async (content: string, parentId: string | null = null) => {
+    if (!API_URL) {
+      alert('API URL is not configured.');
+      return;
+    }
     if (limitReached) {
       alert('Comment limit reached for this post.');
       return;
@@ -97,7 +94,7 @@ export function CommentSection({ slug, initialComments, currentUser }: CommentSe
       </div>
 
       {error && <p className="text-red-500">Error loading comments.</p>}
-      {!comments && <p className="text-gray-400">Loading...</p>}
+      {!comments && !error && <p className="text-gray-400">Loading...</p>}
       {comments && (
         <CommentList comments={comments} onPostReply={handlePostComment} currentUser={currentUser} />
       )}
