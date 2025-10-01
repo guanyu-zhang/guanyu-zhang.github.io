@@ -29,6 +29,8 @@ jobs:
       - name: Build
         env:
           NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_NEON_AUTH_HOST: ${{ vars.NEXT_PUBLIC_NEON_AUTH_HOST }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
         run: npm run build
 
       - name: Setup Pages
