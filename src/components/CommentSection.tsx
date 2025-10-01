@@ -27,12 +27,9 @@ function LoginButtons() {
     <div className="border border-gray-700 rounded-lg p-6 text-center">
       <h3 className="font-semibold text-white mb-4">Join the conversation</h3>
       <p className="text-gray-400 mb-6">Please log in to post a comment.</p>
-      <div className="flex flex-col sm:flex-row justify-center gap-4">
-        <a href={app.urls.signInWithProvider('github')} className="px-6 py-2 font-semibold text-white bg-gray-800 border border-gray-600 rounded-md hover:bg-gray-700">
-          Login with GitHub
-        </a>
-        <a href={app.urls.signInWithProvider('google')} className="px-6 py-2 font-semibold text-white bg-blue-600 border border-blue-600 rounded-md hover:bg-blue-700">
-          Login with Google
+      <div className="flex justify-center">
+        <a href={app.urls.signIn} className="px-6 py-2 font-semibold text-white bg-blue-600 border border-blue-600 rounded-md hover:bg-blue-700">
+          Login to Comment
         </a>
       </div>
     </div>
@@ -96,7 +93,7 @@ export function CommentSection({ slug, initialComments }: {
       {error && <p className="text-red-500">Error loading comments.</p>}
       {!comments && !error && <p className="text-gray-400">Loading...</p>}
       {comments && (
-        <CommentList comments={comments} onPostReply={handlePostComment} currentUser={currentUser} />
+        <CommentList comments={comments} onPostReply={handlePostComment} />
       )}
     </div>
   );

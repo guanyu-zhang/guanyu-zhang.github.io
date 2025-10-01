@@ -4,24 +4,24 @@ import { useState } from 'react';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { CommentWithChildren, User } from '@/lib/types';
+import { CommentWithChildren } from '@/lib/types';
 import CommentForm from './CommentForm';
+import { useUser } from '@stackframe/stack';
 
 interface CommentListProps {
   comments: CommentWithChildren[];
   onPostReply: (content: string, parentId: string) => Promise<void>;
-  currentUser: User | null;
 }
 
 interface CommentItemProps {
   comment: CommentWithChildren;
   onPostReply: (content: string, parentId: string) => Promise<void>;
-  currentUser: User | null;
 }
 
-function CommentItem({ comment, onPostReply, currentUser }: CommentItemProps) {
+function CommentItem({ comment, onPostReply }: CommentItemProps) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const currentUser = useUser();
 
   const handleReplySubmit = async (content: string) => {
     await onPostReply(content, comment.id);
@@ -74,18 +74,18 @@ function CommentItem({ comment, onPostReply, currentUser }: CommentItemProps) {
 
       {!isCollapsed && comment.replies && comment.replies.length > 0 && (
         <div className="mt-4">
-          <CommentList comments={comment.replies} onPostReply={onPostReply} currentUser={currentUser} />
+          <CommentList comments={comment.replies} onPostReply={onPostReply} />
         </div>
       )}
     </div>
   );
 }
 
-export default function CommentList({ comments, onPostReply, currentUser }: CommentListProps) {
+export default function CommentList({ comments, onPostReply }: CommentListProps) {
   return (
     <div className="divide-y divide-gray-800">
       {comments.map((comment) => (
-        <CommentItem key={comment.id} comment={comment} onPostReply={onPostReply} currentUser={currentUser} />
+        <CommentItem key={comment.id} comment={comment} onPostReply={onPostReply} />
       ))}
     </div>
   );

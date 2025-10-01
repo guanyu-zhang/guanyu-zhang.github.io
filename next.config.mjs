@@ -3,7 +3,6 @@ import remarkGfm from 'remark-gfm'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
   reactStrictMode: true,
   // Add pageExtensions to include `md` and `x` files as pages
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
