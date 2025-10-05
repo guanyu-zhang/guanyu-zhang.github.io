@@ -7,6 +7,9 @@ const nextConfig = {
   reactStrictMode: true,
   // Add pageExtensions to include `md` and `x` files as pages
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
+  env: {
+    NEXT_PUBLIC_WALINE_SERVER_URL: process.env.NEXT_PUBLIC_WALINE_SERVER_URL,
+  },
 };
 
 const withMDX = createMDX({
