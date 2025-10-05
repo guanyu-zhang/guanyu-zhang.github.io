@@ -10,11 +10,13 @@ interface WalineCommentProps {
 
 const WalineComment: React.FC<WalineCommentProps> = ({ path }) => {
   useEffect(() => {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
     init({
       el: '#waline',
       serverURL: process.env.NEXT_PUBLIC_WALINE_SERVER_URL!,
       path: path,
-      dark: 'html[data-theme="dark"]',
+      dark: true, // Force dark mode for testing
     });
   }, [path]);
 
