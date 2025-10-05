@@ -4,6 +4,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import Pdf from '@/components/Pdf';
 import remarkGfm from 'remark-gfm';
 import { useMDXComponents } from '@/mdx-components';
+import WalineComment from '@/components/WalineComment';
 
 export async function generateStaticParams() {
   const slugs = getAllPostSlugs('blogs');
@@ -49,12 +50,9 @@ export default async function BlogSlugPage({ params }: { params: { slug: string 
 
           <hr className="my-12 border-neutral-700" />
 
-          {/* Comment Section Placeholder */}
           <div id="comments" className="mt-8">
             <h2 className="text-2xl font-bold text-white">Comments</h2>
-            <div className="mt-4 p-4 bg-neutral-900 rounded-lg text-center text-neutral-500">
-              <p>Comments are coming soon.</p>
-            </div>
+            <WalineComment path={`/blogs/${params.slug}`} />
           </div>
         </article>
       </div>
