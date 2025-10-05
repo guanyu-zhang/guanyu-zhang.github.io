@@ -12,7 +12,7 @@ const WalineComment: React.FC<WalineCommentProps> = ({ path }) => {
   useEffect(() => {
     init({
       el: '#waline',
-      serverURL: 'https://waline-comment-backend.vercel.app/',
+      serverURL: process.env.NEXT_PUBLIC_WALINE_SERVER_URL,
       path: path,
       dark: 'html[data-theme="dark"]',
     });
