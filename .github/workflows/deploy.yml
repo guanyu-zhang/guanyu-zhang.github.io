@@ -28,7 +28,9 @@ jobs:
         run: npm install
 
       - name: Build
-        run: WALINE_SERVER_URL=${{ secrets.WALINE_SERVER_URL }} npm run build
+        run: npm run build
+        env:
+          WALINE_SERVER_URL: ${{ secrets.WALINE_SERVER_URL }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
