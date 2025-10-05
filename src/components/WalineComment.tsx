@@ -16,7 +16,7 @@ const WalineComment: React.FC<WalineCommentProps> = ({ path }) => {
       el: '#waline',
       serverURL: process.env.NEXT_PUBLIC_WALINE_SERVER_URL!,
       path: path,
-      dark: true, // Force dark mode for testing
+      dark: true, // Force dark mode
     });
   }, [path]);
 
