@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.8] - 2025-10-05
+
+### Changed
+
+- Changed the background fill for all generated Apple touch icons from white to black to better match the site's aesthetic.
+
+## [0.2.7] - 2025-10-05
+
+### Fixed
+
+- **Build and Metadata Correction**: Resolved a critical build error in `src/app/layout.tsx` by refactoring the component to use the idiomatic Next.js `metadata` and `viewport` APIs. This fixed the initial JSX syntax error and addressed a subsequent warning by moving the `themeColor` property from the `metadata` export to the correct `viewport` export, aligning with modern Next.js standards.
+
 ## [0.2.6] - 2025-10-05
 
 ### Added
