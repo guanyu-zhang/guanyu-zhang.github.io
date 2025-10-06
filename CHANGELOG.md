@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.6] - 2025-10-05
+
+### Added
+
+- **PWA and Favicon Integration**: Implemented full Progressive Web App (PWA) support by integrating the `next-pwa` package. A comprehensive set of favicons and app icons were generated using the `favicons` package, ensuring proper display on all devices and platforms. The main layout was updated with all necessary PWA and icon-related meta tags, and conflicting files were removed to create a single, clean configuration.
+
 ## [0.2.5] - 2025-10-05
 
 ### Reverted

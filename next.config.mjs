@@ -1,5 +1,6 @@
 import createMDX from '@next/mdx'
 import remarkGfm from 'remark-gfm'
+import pwa from 'next-pwa'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -21,4 +22,11 @@ const withMDX = createMDX({
   },
 });
 
-export default withMDX(nextConfig);
+const withPWA = pwa({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development',
+})
+
+export default withPWA(withMDX(nextConfig));
