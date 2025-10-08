@@ -7,6 +7,8 @@ import remarkSlug from 'remark-slug';
 import { visit } from 'unist-util-visit';
 import FlexSearch from 'flexsearch';
 
+
+
 // A custom plugin to strip MDX tags and get raw text
 function remarkStripMdx() {
   return (tree) => {
@@ -39,6 +41,17 @@ function getPosts(type) {
     });
 }
 
+// Helper function to recursively get all text from a node
+function getNodeText(node) {
+  if (node.type === 'text') {
+    return node.value;
+  }
+  if (node.children) {
+    return node.children.map(getNodeText).join('');
+  }
+  return '';
+}
+
 async function createSearchIndex() {
   console.log('Starting search index build...');
 
@@ -49,10 +62,10 @@ async function createSearchIndex() {
   const index = new FlexSearch.Document({
     document: {
       id: 'id',
-      index: ['content'],
+      index: ['title', 'heading_text', 'content'],
       store: ['title', 'path', 'heading_text', 'heading_slug', 'content_snippet'],
     },
-    tokenize: 'forward',
+    tokenize: 'full',
   });
 
   let docId = 0;
@@ -69,12 +82,12 @@ async function createSearchIndex() {
 
     visit(tree, (node) => {
       if (node.type === 'heading') {
-        currentHeading = node.children.map(c => c.value).join('');
+        currentHeading = getNodeText(node);
         currentHeadingSlug = node.data && node.data.id ? node.data.id : null;
       }
 
       if (node.type === 'paragraph') {
-        const content = node.children.map(c => c.value).join('');
+        const content = getNodeText(node);
         if (content.trim() === '') return;
 
         index.add({
@@ -87,6 +100,66 @@ async function createSearchIndex() {
           content_snippet: content.substring(0, 100) + (content.length > 100 ? '...' : ''),
         });
       }
+    });
+  }
+
+  // Add static pages manually with comprehensive, sectioned content
+  const staticPageSections = [
+    // About Page Sections
+    {
+      id: 'about-intro1',
+      title: 'About Me',
+      path: '/about',
+      heading_text: 'Introduction',
+      content: `I hold a Master's in Computer Science from Columbia University, where I specialized in Machine Learning.`
+    },
+    {
+      id: 'about-intro2',
+      title: 'About Me',
+      path: '/about',
+      heading_text: 'Introduction',
+      content: `I have professional experience as a software engineer at Ant International and`
+    },
+    {
+      id: 'about-intro3',
+      title: 'About Me',
+      path: '/about',
+      heading_text: 'Introduction',
+      content: `am passionate about building intelligent, scalable systems and exploring the frontiers of AI.`
+    },
+    {
+      id: 'about-skills',
+      title: 'About Me',
+      path: '/about',
+      heading_text: 'Technical Skills',
+      content: 'C++, Java, Go, Python, JavaScript, SQL, AWS, GCP, Docker, Kubernetes, PyTorch, MongoDB, Redis'
+    },
+    {
+      id: 'about-contact',
+      title: 'About Me',
+      path: '/about',
+      heading_text: 'Contact',
+      content: 'You can reach me via email at evanz1627@gmail.com or connect with me on social media. GitHub LinkedIn'
+    },
+    // Resume Page Section
+    {
+      id: 'resume-main',
+      title: 'Resume',
+      path: '/resume',
+      heading_text: 'My Resume',
+      content: 'My Resume. Here is my resume. You can view it below or download it directly. Download PDF.'
+    },
+  ];
+
+  for (const section of staticPageSections) {
+    index.add({
+      id: docId++,
+      title: section.title,
+      path: section.path,
+      heading_text: section.heading_text,
+      heading_slug: section.heading_text.toLowerCase().replace(/ /g, '-'), // simple slug generation
+      content: section.content,
+      content_snippet: section.content.substring(0, 100) + (section.content.length > 100 ? '...' : ''),
     });
   }
 

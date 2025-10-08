@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import IframeViewer from '@/components/IframeViewer';
+import HighlightWrapper from '@/components/HighlightWrapper';
 
 const PdfViewer = dynamic(() => import('@/components/PdfViewer'), {
   ssr: false,
@@ -31,9 +32,13 @@ export default function ResumePage() {
     <div className="w-full min-h-screen bg-black text-white pt-24 md:pt-32 pb-24">
       <div className="container mx-auto px-4 flex flex-col items-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center">My Resume</h1>
-        <p className="text-neutral-400 mb-8 text-center">
-          Here is my resume. You can view it below or download it directly.
-        </p>
+        <Suspense>
+          <HighlightWrapper>
+            <p className="text-neutral-400 mb-8 text-center">
+              Here is my resume. You can view it below or download it directly.
+            </p>
+          </HighlightWrapper>
+        </Suspense>
 
         <div className="w-full max-w-4xl flex justify-center mb-8">
           <a

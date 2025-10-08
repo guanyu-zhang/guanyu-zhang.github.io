@@ -35,22 +35,28 @@ export default async function BlogSlugPage({ params }: { params: { slug: string 
         <article className="prose prose-invert prose-lg max-w-3xl mx-auto">
           <header className="mb-8 text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-white">{post.title}</h1>
-            <div className="text-neutral-400 mt-4">
-              <span>By {post.author}</span>
-              <span className="mx-2">|</span>
-              <span>{new Date(post.date).toLocaleDateString()}</span>
-              <span className="mx-2">|</span>
-              <span>{post.location}</span>
-            </div>
           </header>
-          
+
           <Suspense fallback={<div>Loading highlights...</div>}>
             <HighlightWrapper>
-              <MDXRemote 
-                source={post.content} 
-                components={useMDXComponents({ Pdf })} 
-                options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} 
-              />
+              <>
+                <div className="text-neutral-400 -mt-4 mb-8 flex justify-center items-center flex-wrap gap-x-2">
+                  <span>By {post.author}</span>
+                  <span className="hidden sm:inline">|</span>
+                  <span>{new Date(post.date).toLocaleDateString()}</span>
+                  {post.location && (
+                    <>
+                      <span className="hidden sm:inline">|</span>
+                      <span>{post.location}</span>
+                    </>
+                  )}
+                </div>
+                <MDXRemote 
+                  source={post.content} 
+                  components={useMDXComponents({ Pdf })} 
+                  options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} 
+                />
+              </>
             </HighlightWrapper>
           </Suspense>
 

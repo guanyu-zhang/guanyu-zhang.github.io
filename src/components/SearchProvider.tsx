@@ -2,19 +2,7 @@
 
 import { KBarProvider, KBarPortal, KBarPositioner, KBarAnimator, KBarSearch, KBarResults, useMatches, Action, useKBar, useRegisterActions } from 'kbar';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useMemo } from 'react';
-import FlexSearch from 'flexsearch';
-
-// Create a module-level index
-// @ts-ignore
-const searchIndex = new FlexSearch.Document({
-  document: {
-    id: 'id',
-    index: ['content'],
-    store: ['title', 'path', 'heading_text', 'heading_slug', 'content_snippet'],
-  },
-  tokenize: 'forward',
-});
+import { useState, useEffect, useMemo, useRef } from 'react';
 
 function RenderResults() {
   const { results } = useMatches();
@@ -59,12 +47,27 @@ const PARENT_SEARCH_ACTION_ID = "search-content-parent";
 
 function SearchLogic() {
   const router = useRouter();
+  const searchIndexRef = useRef<any>(null);
   const [indexLoaded, setIndexLoaded] = useState(false);
   const [allContent, setAllContent] = useState<any[]>([]);
   const [contentResults, setContentResults] = useState<Action[]>([]);
 
   useEffect(() => {
     async function loadData() {
+      if (!searchIndexRef.current) {
+        const FlexSearch = await import('flexsearch');
+        const Document = FlexSearch.Document;
+        searchIndexRef.current = new Document({
+          document: {
+            id: 'id',
+            index: ['title', 'heading_text', 'content'],
+            store: ['title', 'path', 'heading_text', 'heading_slug', 'content_snippet'],
+          },
+          tokenize: 'full',
+        });
+      }
+      const searchIndex = searchIndexRef.current;
+
       const [indexRes, contentRes] = await Promise.all([
         fetch('/search-index.json'),
         fetch('/all-content.json'),
@@ -72,7 +75,6 @@ function SearchLogic() {
 
       const indexData = await indexRes.json();
       for (const key in indexData) {
-        // @ts-ignore
         searchIndex.import(key, indexData[key]);
       }
 
@@ -88,18 +90,19 @@ function SearchLogic() {
 
   useEffect(() => {
     if (!indexLoaded) return;
+    const searchIndex = searchIndexRef.current;
+    if (!searchIndex) return;
 
     if (search.length > 0) {
-      // @ts-ignore
       const results = searchIndex.search(search, { enrich: true });
-      const uniqueResults = results.flatMap((r) => r.result).reduce((acc: any[], doc) => {
+      const uniqueResults = results.flatMap((r: any) => r.result).reduce((acc: any[], doc: any) => {
         if (!acc.some(item => item.id === doc.id)) {
           acc.push(doc);
         }
         return acc;
       }, []);
 
-      const resultActions: Action[] = uniqueResults.map(doc => ({
+      const resultActions: Action[] = uniqueResults.map((doc: any) => ({
         id: String(doc.id),
         name: doc.doc.heading_text,
         subtitle: `In: ${doc.doc.title} - ${doc.doc.content_snippet}`,
@@ -110,7 +113,6 @@ function SearchLogic() {
       }));
       setContentResults(resultActions);
     } else {
-      // When search is empty, show all content as the default
       const defaultActions = allContent.map((post: any) => ({
         id: post.slug,
         name: post.title,

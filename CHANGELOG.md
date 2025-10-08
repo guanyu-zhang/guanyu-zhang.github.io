@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2025-10-08
+
+### Added
+
+- **Advanced Search Functionality**: Implemented a new site-wide search feature accessible via a header icon or keyboard shortcut (Cmd+K/Ctrl+K).
+  - **UI**: Utilizes the `kbar` command palette for a modern, fast, and intuitive user experience.
+  - **Engine**: Powered by `FlexSearch.js`, with a search index pre-built at build time for maximum performance.
+  - **Multi-Level Interface**: The search has two levels. Level 1 provides quick navigation to main pages. Level 2 ("Search all content...") provides a full-text search experience.
+  - **Full-Text Search**: The search engine indexes the full content of all blogs and projects, as well as static pages like "About" and "Resume".
+  - **Default View**: The content search view defaults to showing a list of all articles, grouped by "PROJECTS" and "BLOGS".
+  - **Dynamic Results**: Search results appear in real-time as the user types.
+  - **Contextual & Precise Navigation**: Results include a snippet of the surrounding text and link directly to the nearest parent heading of the match.
+  - **Highlighting**: The matched search query is automatically highlighted on the destination page.
+- **Responsive Header**: The main navigation header has been refactored to be responsive.
+  - On desktop, it shows the full navigation with the new search icon.
+  - On mobile, it features a horizontally-scrollable navigation and a hamburger menu to access the search functionality.
+
+### Changed
+
+- Replaced `fuse.js` with `flexsearch` for the search implementation.
+- Modified the build process to include a script that generates the search index from all site content.
+- Updated all content pages (`blogs/[slug]`, `projects/[slug]`, `about`, `resume`) to include a `Suspense` boundary and highlighting logic.
+
+### Fixed
+
+- Resolved numerous build and runtime errors related to dependency conflicts, server-side rendering of client components, and incorrect library usage.
+- Fixed multiple UI and styling bugs, including z-index layering issues and incorrect component rendering.
+- Corrected search indexing logic to handle special characters, long text, and text within hyperlinks.
+
 ## [0.3.0] - 2025-10-07
 
 ### Added
