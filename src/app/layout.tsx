@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from '@/components/Header';
+import ClientLayout from "@/components/ClientLayout";
+import SearchProvider from "@/components/SearchProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -56,8 +57,9 @@ export default function RootLayout({
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </head>
       <body className={`${inter.className} bg-black`}>
-        <Header />
-        {children}
+        <SearchProvider>
+          <ClientLayout>{children}</ClientLayout>
+        </SearchProvider>
       </body>
     </html>
   );

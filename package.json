@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "NODE_OPTIONS='--inspect' next dev",
-    "build": "next build",
+    "build": "node scripts/build-search.mjs && next build",
     "start": "next start",
     "lint": "eslint"
   },
@@ -17,7 +17,10 @@
     "@types/three": "^0.180.0",
     "@use-gesture/react": "^10.3.1",
     "@waline/client": "^3.6.0",
+    "flexsearch": "^0.8.212",
     "gray-matter": "^4.0.3",
+    "kbar": "^0.1.0-beta.48",
+    "mark.js": "^8.11.1",
     "next": "^14.2.3",
     "next-mdx-remote": "^5.0.0",
     "next-pwa": "^5.6.0",
@@ -27,9 +30,12 @@
     "react-zoom-pan-pinch": "^3.7.0",
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
+    "remark-slug": "^7.0.1",
+    "remark-strip-mdx": "^1.0.2",
     "three": "^0.180.0"
   },
   "devDependencies": {
+    "@types/mark.js": "^8.11.12",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

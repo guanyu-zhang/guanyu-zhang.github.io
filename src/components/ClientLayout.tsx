@@ -1,17 +1,14 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-import Footer from './Footer';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-
   return (
     <>
-      <main className="flex-grow container mx-auto px-4 pt-24 md:pt-32">
-        {children}
-      </main>
-      {pathname !== '/' && <Footer />}
+      <Header />
+      <main>{children}</main>
+      <Footer />
     </>
   );
 }

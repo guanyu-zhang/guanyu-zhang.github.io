@@ -4,7 +4,9 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import Pdf from '@/components/Pdf';
 import remarkGfm from 'remark-gfm';
 import { useMDXComponents } from '@/mdx-components';
+import { Suspense } from 'react';
 import WalineComment from '@/components/WalineComment';
+import HighlightWrapper from '@/components/HighlightWrapper';
 
 export async function generateStaticParams() {
   const slugs = getAllPostSlugs('projects');
@@ -50,11 +52,15 @@ export default async function ProjectSlugPage({ params }: Props) {
             </div>
           </header>
           
-          <MDXRemote 
-            source={post.content} 
-            components={useMDXComponents({ Pdf })} 
-            options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} 
-          />
+          <Suspense fallback={<div>Loading highlights...</div>}>
+            <HighlightWrapper>
+              <MDXRemote 
+                source={post.content} 
+                components={useMDXComponents({ Pdf })} 
+                options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} 
+              />
+            </HighlightWrapper>
+          </Suspense>
 
           <hr className="my-12 border-neutral-700" />
 
