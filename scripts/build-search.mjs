@@ -21,6 +21,21 @@ function remarkStripMdx() {
   };
 }
 
+// Utility function to chunk text
+export function chunkText(text, maxLen = 300, step = 150) {
+  const chunks = [];
+  let i = 0, n = 0;
+  while (i < text.length) {
+    const end = Math.min(text.length, i + maxLen);
+    const slice = text.slice(i, end);
+    chunks.push({ id: `${n}`, chunkId: `${i}-${end}`, text: slice, start: i, end });
+    if (end === text.length) break;
+    i += step;
+    n += 1;
+  }
+  return chunks;
+}
+
 const contentDirectory = path.join(process.cwd(), 'src', 'content');
 const publicDirectory = path.join(process.cwd(), 'public');
 
@@ -62,10 +77,17 @@ async function createSearchIndex() {
   const index = new FlexSearch.Document({
     document: {
       id: 'id',
-      index: ['title', 'heading_text', 'content'],
-      store: ['title', 'path', 'heading_text', 'heading_slug', 'content_snippet'],
+      index: [
+        { field: 'title', tokenize: 'forward', ngram: 3, boost: 8 },
+        { field: 'heading_text', tokenize: 'forward', ngram: 3, boost: 5 },
+        { field: 'content', tokenize: 'forward', ngram: 3, boost: 1 },
+      ],
+      store: ['title', 'path', 'heading_text', 'heading_slug', 'content_snippet', 'chunkId'],
     },
     tokenize: 'full',
+    // Loosen recall a bit and explore more candidates as suggested in the guide
+    threshold: 0,
+    depth: 5,
   });
 
   let docId = 0;
@@ -87,18 +109,23 @@ async function createSearchIndex() {
       }
 
       if (node.type === 'paragraph') {
-        const content = getNodeText(node);
-        if (content.trim() === '') return;
+        const paragraphContent = getNodeText(node);
+        if (paragraphContent.trim() === '') return;
 
-        index.add({
-          id: docId++,
-          title: post.title,
-          path: `/${post.type}/${post.slug}`,
-          heading_text: currentHeading || post.title,
-          heading_slug: currentHeadingSlug || '',
-          content: content,
-          content_snippet: content.substring(0, 100) + (content.length > 100 ? '...' : ''),
-        });
+        const chunks = chunkText(paragraphContent); // Use the new chunkText function
+
+        for (const chunk of chunks) {
+          index.add({
+            id: `${docId++}-${chunk.id}`, // Unique ID for each chunk
+            title: post.title,
+            path: `/${post.type}/${post.slug}`,
+            heading_text: currentHeading || post.title,
+            heading_slug: currentHeadingSlug || '',
+            content: chunk.text, // Index the chunk text
+            content_snippet: chunk.text, // Store the chunk text as snippet
+            chunkId: chunk.chunkId, // Store chunk ID for potential future use
+          });
+        }
       }
     });
   }
@@ -152,15 +179,20 @@ async function createSearchIndex() {
   ];
 
   for (const section of staticPageSections) {
-    index.add({
-      id: docId++,
-      title: section.title,
-      path: section.path,
-      heading_text: section.heading_text,
-      heading_slug: section.heading_text.toLowerCase().replace(/ /g, '-'), // simple slug generation
-      content: section.content,
-      content_snippet: section.content.substring(0, 100) + (section.content.length > 100 ? '...' : ''),
-    });
+    const chunks = chunkText(section.content); // Chunk static page content too
+
+    for (const chunk of chunks) {
+      index.add({
+        id: `${docId++}-${section.id}-${chunk.id}`, // Unique ID for each static page chunk
+        title: section.title,
+        path: section.path,
+        heading_text: section.heading_text,
+        heading_slug: section.heading_text.toLowerCase().replace(/ /g, '-'),
+        content: chunk.text,
+        content_snippet: chunk.text,
+        chunkId: chunk.chunkId,
+      });
+    }
   }
 
   console.log(`Indexed ${docId} documents.`);

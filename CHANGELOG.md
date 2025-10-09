@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Added `/public/sw.js` and `/public/workbox-*.js` to `.gitignore` as they are generated PWA assets.
+- Implemented text chunking in `scripts/build-search.mjs` for post and static page content to improve FlexSearch indexing accuracy. Updated FlexSearch configuration with weighted multi-field indexing and adjusted document IDs for unique chunk identification.
 - Replaced `fuse.js` with `flexsearch` for the search implementation.
 - Modified the build process to include a script that generates the search index from all site content.
 - Updated all content pages (`blogs/[slug]`, `projects/[slug]`, `about`, `resume`) to include a `Suspense` boundary and highlighting logic.

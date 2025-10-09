@@ -43,3 +43,10 @@ next-env.d.ts
 # Search Index Artifacts
 /public/search-index.json
 /public/all-content.json
+
+# PWA Assets
+/public/sw.js
+/public/workbox-*.js
+
+# FlexSearch Guide
+/public/flexsearch_guide_prompt.md
