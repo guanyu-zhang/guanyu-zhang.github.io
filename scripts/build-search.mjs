@@ -81,8 +81,11 @@ async function createSearchIndex() {
         { field: 'title', tokenize: 'forward', ngram: 3, boost: 8 },
         { field: 'heading_text', tokenize: 'forward', ngram: 3, boost: 5 },
         { field: 'content', tokenize: 'forward', ngram: 3, boost: 1 },
+        { field: 'author', tokenize: 'forward', boost: 3 }, // Add author field
+        { field: 'date', tokenize: 'forward', boost: 2 },   // Add date field
+        { field: 'location', tokenize: 'forward', boost: 2 }, // Add location field
       ],
-      store: ['title', 'path', 'heading_text', 'heading_slug', 'content_snippet', 'chunkId'],
+      store: ['title', 'path', 'heading_text', 'heading_slug', 'content_snippet', 'chunkId', 'author', 'date', 'location'], // Add author, date, and location to store
     },
     tokenize: 'full',
     // Loosen recall a bit and explore more candidates as suggested in the guide
@@ -124,6 +127,9 @@ async function createSearchIndex() {
             content: chunk.text, // Index the chunk text
             content_snippet: chunk.text, // Store the chunk text as snippet
             chunkId: chunk.chunkId, // Store chunk ID for potential future use
+            author: post.author || 'Unknown',
+            date: post.date ? new Date(post.date).toISOString().split('T')[0] : '',
+            location: post.location || '', // Add location
           });
         }
       }
@@ -138,35 +144,50 @@ async function createSearchIndex() {
       title: 'About Me',
       path: '/about',
       heading_text: 'Introduction',
-      content: `I hold a Master's in Computer Science from Columbia University, where I specialized in Machine Learning.`
+      content: `I hold a Master's in Computer Science from Columbia University, where I specialized in Machine Learning.`,
+      author: '',
+      date: '',
+      location: '', // Default location for static pages
     },
     {
       id: 'about-intro2',
       title: 'About Me',
       path: '/about',
       heading_text: 'Introduction',
-      content: `I have professional experience as a software engineer at Ant International and`
+      content: `I have professional experience as a software engineer at Ant International and`,
+      author: '',
+      date: '',
+      location: '',
     },
     {
       id: 'about-intro3',
       title: 'About Me',
       path: '/about',
       heading_text: 'Introduction',
-      content: `am passionate about building intelligent, scalable systems and exploring the frontiers of AI.`
+      content: `am passionate about building intelligent, scalable systems and exploring the frontiers of AI.`,
+      author: '',
+      date: '',
+      location: '',
     },
     {
       id: 'about-skills',
       title: 'About Me',
       path: '/about',
       heading_text: 'Technical Skills',
-      content: 'C++, Java, Go, Python, JavaScript, SQL, AWS, GCP, Docker, Kubernetes, PyTorch, MongoDB, Redis'
+      content: 'C++, Java, Go, Python, JavaScript, SQL, AWS, GCP, Docker, Kubernetes, PyTorch, MongoDB, Redis',
+      author: '',
+      date: '',
+      location: '',
     },
     {
       id: 'about-contact',
       title: 'About Me',
       path: '/about',
       heading_text: 'Contact',
-      content: 'You can reach me via email at evanz1627@gmail.com or connect with me on social media. GitHub LinkedIn'
+      content: 'You can reach me via email at evanz1627@gmail.com or connect with me on social media. GitHub LinkedIn',
+      author: '',
+      date: '',
+      location: '',
     },
     // Resume Page Section
     {
@@ -174,7 +195,10 @@ async function createSearchIndex() {
       title: 'Resume',
       path: '/resume',
       heading_text: 'My Resume',
-      content: 'My Resume. Here is my resume. You can view it below or download it directly. Download PDF.'
+      content: 'My Resume. Here is my resume. You can view it below or download it directly. Download PDF.',
+      author: '',
+      date: '',
+      location: '',
     },
   ];
 
@@ -191,6 +215,9 @@ async function createSearchIndex() {
         content: chunk.text,
         content_snippet: chunk.text,
         chunkId: chunk.chunkId,
+        author: section.author,
+        date: section.date,
+        location: section.location, // Add location for static pages
       });
     }
   }

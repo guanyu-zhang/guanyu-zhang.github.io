@@ -26,12 +26,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added `/public/sw.js` and `/public/workbox-*.js` to `.gitignore` as they are generated PWA assets.
 - Implemented text chunking in `scripts/build-search.mjs` for post and static page content to improve FlexSearch indexing accuracy. Updated FlexSearch configuration with weighted multi-field indexing and adjusted document IDs for unique chunk identification.
+- Enhanced search functionality in `src/components/SearchProvider.tsx` to include `author`, `date`, and `location` fields in FlexSearch queries, display these details in search results, and handle various date query formats.
+- Removed `formatDateQuery` from `src/components/SearchProvider.tsx` to simplify date searching, allowing FlexSearch to match date parts directly without strict formatting.
+- Reviewed project structure and confirmed that all identified generated files and directories are appropriately covered by `.gitignore`.
+- Removed `public/flexsearch_guide_prompt.md` from `.gitignore` as it is a useful reference document for other projects.
 - Replaced `fuse.js` with `flexsearch` for the search implementation.
 - Modified the build process to include a script that generates the search index from all site content.
 - Updated all content pages (`blogs/[slug]`, `projects/[slug]`, `about`, `resume`) to include a `Suspense` boundary and highlighting logic.
 
 ### Fixed
 
+- Resolved `TypeError: Cannot read properties of undefined (reading 'import')` in `src/components/SearchProvider.tsx` by updating FlexSearch.Document configuration to match the build script.
+- Resolved `Type error: Object literal may only specify known properties, and 'ngram' does not exist` in `src/components/SearchProvider.tsx` by reverting unsupported FlexSearch indexing options for client-side compatibility.
 - Resolved numerous build and runtime errors related to dependency conflicts, server-side rendering of client components, and incorrect library usage.
 - Fixed multiple UI and styling bugs, including z-index layering issues and incorrect component rendering.
 - Corrected search indexing logic to handle special characters, long text, and text within hyperlinks.

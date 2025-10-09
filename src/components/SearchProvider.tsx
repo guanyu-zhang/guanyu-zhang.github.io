@@ -60,8 +60,8 @@ function SearchLogic() {
         searchIndexRef.current = new Document({
           document: {
             id: 'id',
-            index: ['title', 'heading_text', 'content'],
-            store: ['title', 'path', 'heading_text', 'heading_slug', 'content_snippet'],
+            index: ['title', 'heading_text', 'content', 'author', 'date', 'location'], // Simplified index fields
+            store: ['title', 'path', 'heading_text', 'heading_slug', 'content_snippet', 'chunkId', 'author', 'date', 'location'], // Keep all store fields
           },
           tokenize: 'full',
         });
@@ -88,13 +88,37 @@ function SearchLogic() {
 
   const { search } = useKBar((state) => ({ search: state.searchQuery }));
 
+  // Helper to format subtitle for search results
+  const formatSubtitle = (doc: any, query: string) => {
+    let subtitleParts = [];
+    if (doc.title && doc.title !== doc.heading_text) {
+      subtitleParts.push(`In: ${doc.title}`);
+    }
+    if (doc.author) {
+      subtitleParts.push(`By: ${doc.author}`);
+    }
+    if (doc.date) {
+      subtitleParts.push(`On: ${new Date(doc.date).toLocaleDateString()}`);
+    }
+    if (doc.location) {
+      subtitleParts.push(`At: ${doc.location}`);
+    }
+    if (doc.content_snippet) {
+      subtitleParts.push(`Snippet: ${doc.content_snippet}`);
+    }
+    return subtitleParts.join(' | ');
+  };
+
   useEffect(() => {
     if (!indexLoaded) return;
     const searchIndex = searchIndexRef.current;
     if (!searchIndex) return;
 
     if (search.length > 0) {
-      const results = searchIndex.search(search, { enrich: true });
+      const results = searchIndex.search(search, { // Use 'search' directly
+        enrich: true,
+        fields: ['title', 'heading_text', 'content', 'author', 'date', 'location'], // Search across all relevant fields
+      });
       const uniqueResults = results.flatMap((r: any) => r.result).reduce((acc: any[], doc: any) => {
         if (!acc.some(item => item.id === doc.id)) {
           acc.push(doc);
@@ -105,7 +129,7 @@ function SearchLogic() {
       const resultActions: Action[] = uniqueResults.map((doc: any) => ({
         id: String(doc.id),
         name: doc.doc.heading_text,
-        subtitle: `In: ${doc.doc.title} - ${doc.doc.content_snippet}`,
+        subtitle: formatSubtitle(doc.doc, search),
         parent: PARENT_SEARCH_ACTION_ID,
         perform: () => {
           router.push(`${doc.doc.path}?highlight=${search}#${doc.doc.heading_slug}`);

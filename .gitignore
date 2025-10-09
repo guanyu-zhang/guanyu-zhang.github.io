@@ -47,6 +47,3 @@ next-env.d.ts
 # PWA Assets
 /public/sw.js
 /public/workbox-*.js
-
-# FlexSearch Guide
-/public/flexsearch_guide_prompt.md
