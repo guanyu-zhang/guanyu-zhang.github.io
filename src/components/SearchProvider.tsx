@@ -140,7 +140,7 @@ function SearchLogic() {
       const defaultActions = allContent.map((post: any) => ({
         id: post.slug,
         name: post.title,
-        section: post.type.toUpperCase() + 'S',
+        section: post.type.toUpperCase(), // Removed extra 'S'
         parent: PARENT_SEARCH_ACTION_ID,
         perform: () => router.push(`/${post.type}/${post.slug}`),
       }));
@@ -178,7 +178,7 @@ export default function SearchProvider({ children }: { children: React.ReactNode
       <KBarPortal>
         <KBarPositioner className="z-50 bg-black/50 backdrop-blur-sm">
           <KBarAnimator className="w-full max-w-xl bg-neutral-900 text-neutral-100 rounded-lg shadow-lg overflow-hidden">
-            <KBarSearch className="w-full px-4 py-3 text-lg bg-transparent border-b border-neutral-800 focus:outline-none" placeholder={'Type a command or search...'} />
+            <KBarSearch className="w-full px-4 py-3 text-lg bg-transparent border-b border-neutral-800 focus:outline-none" placeholder={'Type a command or search... (e.g., author, keywords, year)'} />
             <RenderResults />
           </KBarAnimator>
         </KBarPositioner>
