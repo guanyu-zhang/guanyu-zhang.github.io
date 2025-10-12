@@ -28,7 +28,32 @@ const ThreeScene = () => {
     }
 
     starGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.7 });
+
+    // Create a star texture with a central circle and fine points
+    const createStarCanvas = () => {
+      const canvas = document.createElement('canvas');
+      const size = 128; // Texture resolution
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const centerX = size / 2;
+        const centerY = size / 2;
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, size / 2, 0, 2 * Math.PI); // Draw a full, solid circle
+        ctx.fill();
+      }
+      return canvas;
+    };
+
+    const starTexture = new THREE.CanvasTexture(createStarCanvas());
+
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.7, // Reverted to original size as requested
+      map: starTexture,
+    });
     const starMesh = new THREE.Points(starGeometry, starMaterial);
     scene.add(starMesh);
 
