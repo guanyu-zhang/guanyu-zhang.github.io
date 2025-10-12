@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2025-10-11
+
+### Changed
+
+- **Header Redesign**: The website header has been redesigned to be a floating, transparent, rounded-corner component that remains fixed at the top of the viewport.
+  - On wide screens, all navigation links are centered.
+  - On narrow screens, the navigation links are horizontally scrollable.
+
+### Fixed
+
+- Resolved a layout issue where the new fixed header would push down the content on all pages, disrupting the vertical centering. The top padding is now conditionally applied to all pages except the homepage.
+- Resolved a runtime error in `ClientLayout` caused by a missing `export default` in the `Header` component.
+
 ## [0.3.0] - 2025-10-08
 
 ### Added
