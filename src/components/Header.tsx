@@ -45,7 +45,7 @@ const Header = () => {
         <div className="flex-1 overflow-x-auto whitespace-nowrap no-scrollbar">
           <nav className="flex items-center md:justify-center space-x-2 md:space-x-4 px-4">
             {navLinks.map((link) => {
-              const isActive = pathname === link.href;
+              const isActive = link.href === '/' ? pathname === link.href : pathname.startsWith(link.href);
               return (
                 <Link
                   key={link.href}
